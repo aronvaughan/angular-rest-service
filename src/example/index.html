@@ -1,0 +1,54 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>AVaughan Angular Rest Service Example Page</title>
+  <meta name="description" content="angular lib for create typical rest service (create/read/readAll/update/delete), allows for mocking for quick UI development, is similar to a BackBone model in how it binds to REST">
+
+  <!-- Author of this application -->
+  <link rel="author" href="https://github.com/aronvaughan"> 
+
+</head>
+
+<body ontouchstart ng-app="myApp">
+
+  <div ng-controller="testController">
+
+      <h3>Mock Implementation Names (In-memory in .js)</h3>
+      {{mockNames}}
+
+      <h3>Real Implementation Names (calls remote express server)</h3>
+      {{realNames}}
+
+      <h3>add a name to real and mock impls</h3>
+      <form>
+          <input type="text" placeholder="Name" ng-model="name"/>
+          <button ng-click="addName()">Add</button>
+      </form>
+
+      <h3>Extended function on real service impl</h3>
+      <div ng-repeat="name in realNames">
+          {{sayHello(name.name)}} (id is {{name.id}}) <button ng-click="deleteName(name.id)">Delete</button><br>
+      </div>
+
+  </div>
+
+  <!-- build:js scripts/components.min.js -->
+  <!-- bower:js -->
+  <script src="../../bower_components/angular/angular.js"></script>
+  <script src="../../bower_components/angular-logging/dist/angular-logging.min.js"></script>
+  <script src="../../bower_components/lodash/dist/lodash.compat.js"></script>
+  <script src="../../bower_components/angular-resource/angular-resource.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js scripts/app.min.js -->
+  <script src="../angular-rest-service.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/nameService.js"></script>
+  <script src="scripts/testController.js"></script>
+  <!-- endbuild -->
+
+</body>
+
+</html>

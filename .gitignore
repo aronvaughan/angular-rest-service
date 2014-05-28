@@ -1,0 +1,6 @@
+/angular-logging.iml
+/bower_components/
+/node_modules/
+/.idea/
+.DS_Store
+avaughan-rest-service.iml

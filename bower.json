@@ -1,0 +1,41 @@
+{
+  "name": "angular-rest-service",
+  "version": "0.0.1",
+  "description": "angular lib for create typical rest service (create/read/readAll/update/delete), allows for mocking for quick UI development, is similar to a BackBone model in how it binds to REST",
+  "keywords": [
+    "angular",
+    "BackBone",
+    "REST",
+    "service",
+    "javascript",
+    "mock",
+    "quick"
+  ],
+  "main": "dist/angular-rest-service.min.js",
+  "authors": [
+    {
+      "name": "Aron Vaughan",
+      "homepage": "http://www.aronvaughan.com"
+    }
+  ],
+  "licenses": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aronvaughan/angular-rest-service.git"
+  },
+  "ignore": [
+    "bower_components",
+    "node_modules",
+    "**/.*"
+  ],
+  "dependencies": {
+    "angular": "latest",
+    "angular-logging": "latest",
+    "lodash": "~2.4.1",
+    "angular-resource": "~1.2.16"
+  },
+  "devDependencies": {
+    "angular": "latest",
+    "angular-mocks": "latest"
+  }
+}
