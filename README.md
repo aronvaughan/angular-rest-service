@@ -56,11 +56,11 @@ myApp.factory('nameService', function($rootScope, $resource, avLog) {
 this code creates a service called nameService that can be injected into any angular code and does the following (see example app
 and tests bundled with this bower component for full examples):
 
-1) nameService.getAll({ /*no params*/ }) - will GET /names/  will return a collection of all the names found (in the default case the 2 mock instances)
-2) nameService.get({ id: <id> }) - will GET /names/:id and will return the name with the given id
-3) nameService.save(newName, {})  - newName is defined as { name: 'myName' } - will do a POST /names and will create a new entry in the names mock list
-4) nameService.save(updateName, {}) - updateName is defined as {id: 1, name: 'myNameUpdated'} - will do a PUT /names/1 and update the entry in the mock list
-5) nameService.delete(id) - will do a DELETE /names/:id and remove the name from the mock list
+1. nameService.getAll({ /*no params*/ }) - will GET /names/  will return a collection of all the names found (in the default case the 2 mock instances)
+2. nameService.get({ id: <id> }) - will GET /names/:id and will return the name with the given id
+3. nameService.save(newName, {})  - newName is defined as { name: 'myName' } - will do a POST /names and will create a new entry in the names mock list
+4. nameService.save(updateName, {}) - updateName is defined as {id: 1, name: 'myNameUpdated'} - will do a PUT /names/1 and update the entry in the mock list
+5. nameService.delete(id) - will do a DELETE /names/:id and remove the name from the mock list
 
 ### Use the service
 ```js
