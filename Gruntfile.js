@@ -17,7 +17,7 @@ module.exports = function(grunt) {
     // Configurable paths
     var yoConfig = {
         livereload: 35729,
-        examplePage: 'example/index.html',
+        examplePage: 'example/',
         src: 'src',
         dist: 'dist'
     };

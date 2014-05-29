@@ -18,5 +18,5 @@ myApp.config(function(avLogProvider, avLevel) {
         }
     };
     console.log('provider', avLogProvider);
-    avLogProvider.$get[1]().setConfig(myLogConfig);
+    return AVaughanLogging.get(avLogProvider, myLogConfig);
 });

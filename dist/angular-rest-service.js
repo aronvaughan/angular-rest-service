@@ -174,9 +174,9 @@ var ServiceBase = _.extend({}, RequirementsBase, {
     save: function (instance, params) {
       this.logger.debug(this.serviceName + ' SERVICE,  save ', instance);
       this.logger.debug(this.serviceName + ' SERVICE,  save params ', params);
-      this.serviceRemote.save(instance, params);
+      var result = this.serviceRemote.save(instance, params);
       this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.SAVED', instance);
-      return instance;
+      return result;
     },
     delete: function (id) {
       this.logger.debug(this.serviceName + ' SERVICE, delete ', id);
@@ -341,6 +341,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       this.logger.debug(this.serviceName + ' REAL, doing save', instance);
       this.logger.debug(this.serviceName + ' REAL, doing save params ', params);
       var response;
+      console.log('REAL, doing save', params);
       //apply the params to the object before update
       for (var param in params) {
         this.logger.debug(' REAL save param: ' + param, params[param]);
@@ -350,13 +351,16 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       //check whether to do a PUT or POST
       //console.log(' REAL save, instance id: ', instance.id);
       if (instance.id === undefined) {
+        console.log('REAL, doing POST (create)', instance);
         this.logger.debug(this.serviceName + ' REAL, doing POST (create)', instance);
         response = this.resource.save(instance);
+        console.log('REAL, response ', response);
       } else {
-        this.logger.debug(this.serviceName + ' REAL, doint PUT (update)', instance);
+        this.logger.debug(this.serviceName + ' REAL, doing PUT (update)', instance);
         response = this.resource.update({ id: instance.id }, instance);
       }
       this.logger.debug(this.serviceName + ' REAL, save response from server: ', response);
+      return response;
     },
     delete: function (id) {
       this.logger.debug(this.serviceName + ' REAL, delete', id);
