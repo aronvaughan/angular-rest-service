@@ -216,6 +216,8 @@ var ServiceBase = _.extend({}, RequirementsBase, {
     self: undefined,
     baseRequirements: ['avLog', 'serviceName', 'eventChannel', '$rootScope', 'serviceRemote', '$resource'],
 
+    customInitialize: false,
+
     baseInitialize: function(dependencies, requirements) {
         //console.log('base initialize called', dependencies, requirements);
         this.logger = dependencies.avLog.getLogger(dependencies.serviceName);
@@ -316,6 +318,8 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
     dependencies: {
 
     },
+
+    customInitialize: false,
 
     baseInitialize: function(dependencies, requirements) {
         //console.log('base initialize called', dependencies, requirements);
@@ -459,6 +463,8 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
     self: undefined,
 
     baseRequirements: ['avLog', 'serviceName', '$resource', 'resourceUrl', 'eventChannel'],
+
+    customInitialize: false,
 
     baseInitialize: function(dependencies, requirements) {
         //console.log('base initialize called', dependencies, requirements);

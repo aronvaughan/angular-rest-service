@@ -155,6 +155,7 @@ var ServiceBase = _.extend({}, RequirementsBase, {
       'serviceRemote',
       '$resource'
     ],
+    customInitialize: false,
     baseInitialize: function (dependencies, requirements) {
       //console.log('base initialize called', dependencies, requirements);
       this.logger = dependencies.avLog.getLogger(dependencies.serviceName);
@@ -210,6 +211,7 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
     ],
     self: undefined,
     dependencies: {},
+    customInitialize: false,
     baseInitialize: function (dependencies, requirements) {
       //console.log('base initialize called', dependencies, requirements);
       this.logger = dependencies.avLog.getLogger(dependencies.serviceName);
@@ -311,6 +313,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       'resourceUrl',
       'eventChannel'
     ],
+    customInitialize: false,
     baseInitialize: function (dependencies, requirements) {
       //console.log('base initialize called', dependencies, requirements);
       this.logger = dependencies.avLog.getLogger(dependencies.serviceName);
