@@ -173,6 +173,7 @@ var FactoryBase = _.extend({}, RequirementsBase, {
                 dataImpl.initialize(this.dependencies);
             }
             this.service = this.serviceImpl;
+            this.dataImpl = dataImpl;
             this.dependencies.serviceRemote = dataImpl;
 
             this.service.initialize(this.dependencies);
@@ -186,6 +187,8 @@ var FactoryBase = _.extend({}, RequirementsBase, {
  * the official API of the service
  * this class wraps the mock and real service impls - it will delegate to the correct configured mock or real impl
  * based on the factory config
+ *
+ * the mock or real data service can be fetched by this.serviceRemote
  *
  * @type {Object}
  */
@@ -210,6 +213,7 @@ var ServiceBase = _.extend({}, RequirementsBase, {
     $rootScope: undefined,
     serviceRemote: undefined,
     $resource: undefined,
+    self: undefined,
     baseRequirements: ['avLog', 'serviceName', 'eventChannel', '$rootScope', 'serviceRemote', '$resource'],
 
     baseInitialize: function(dependencies, requirements) {
@@ -219,6 +223,12 @@ var ServiceBase = _.extend({}, RequirementsBase, {
         this.baseSetDependencies(dependencies);
         this.baseMergeRequirements(this.baseRequirements, requirements);
         this.dependencyUtil.checkDependencies(this.requirements, this.dependencies);
+        this.self = this;
+
+        if (this.customInitialize) {
+            this.logger.debug('running custom initialize');
+            this.customInitialize(dependencies, requirements);
+        }
     },
 
     /**
@@ -302,6 +312,7 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
      */
     mockData: undefined,
     baseRequirements: ['avLog', 'serviceName', 'mockData'],
+    self: undefined,
     dependencies: {
 
     },
@@ -314,6 +325,13 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
         this.baseMergeRequirements(this.baseRequirements, requirements);
 
         this.dependencyUtil.checkDependencies(this.requirements, this.dependencies);
+
+        this.self = this;
+
+        if (this.customInitialize) {
+            this.logger.debug('running custom initialize');
+            this.customInitialize(dependencies, requirements);
+        }
     },
 
     /**
@@ -438,6 +456,8 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
 
     logger: undefined,
 
+    self: undefined,
+
     baseRequirements: ['avLog', 'serviceName', '$resource', 'resourceUrl', 'eventChannel'],
 
     baseInitialize: function(dependencies, requirements) {
@@ -456,6 +476,13 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
                 method: 'PUT'
             }
         });
+
+        this.self = this;
+
+        if (this.customInitialize) {
+            this.logger.debug('running custom initialize');
+            this.customInitialize(dependencies, requirements);
+        }
     },
 
     /**
@@ -661,6 +688,8 @@ var ServiceContainer = {
  * mockExtend - a js object - define extra functions here that are provided by the mock implementation of the service
  * realExtend - a js object - define extra functions here that are provided by the real implementation (REST) service
  * factoryExtend - a js object - define extra functions here that are provided by the factory
+ *
+ * NOTE: anything set on this object will be available to all classes under the this pointer!!
  *
  * @constructor
  /* jshint ignore:start */
