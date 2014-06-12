@@ -185,13 +185,12 @@ var ServiceBase = _.extend({}, RequirementsBase, {
       this.logger.debug(this.serviceName + ' SERVICE,  save ', instance);
       this.logger.debug(this.serviceName + ' SERVICE,  save params ', params);
       var result = this.serviceRemote.save(instance, params);
-      this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.SAVED', instance);
+      //this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.SAVED', instance);
       return result;
     },
     delete: function (id) {
       this.logger.debug(this.serviceName + ' SERVICE, delete ', id);
-      this.serviceRemote.delete(id);
-      this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.DELETED', id);
+      this.serviceRemote.delete(id);  //this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.DELETED', id);
     }
   });
 /**
@@ -311,7 +310,8 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       'serviceName',
       '$resource',
       'resourceUrl',
-      'eventChannel'
+      'eventChannel',
+      '$rootScope'
     ],
     customInitialize: false,
     baseInitialize: function (dependencies, requirements) {
@@ -370,6 +370,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       this.logger.debug(this.serviceName + ' REAL, doing save', instance);
       this.logger.debug(this.serviceName + ' REAL, doing save params ', params);
       var response;
+      var self = this;
       console.log('REAL, doing save', params);
       //apply the params to the object before update
       for (var param in params) {
@@ -383,7 +384,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
         console.log('REAL, doing POST (create)', instance);
         this.logger.debug(this.serviceName + ' REAL, doing POST (create)', instance);
         response = this.resource.save(instance, function (value, responseHeaders) {
-          self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.SUCCESS', value);
+          self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.SUCCESS', value, responseHeaders);
         }, function (httpResponse) {
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.FAIL', httpResponse);
         });
@@ -391,7 +392,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       } else {
         this.logger.debug(this.serviceName + ' REAL, doing PUT (update)', instance);
         response = this.resource.update({ id: instance.id }, instance, function (value, responseHeaders) {
-          self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.SUCCESS', value);
+          self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.SUCCESS', value, responseHeaders);
         }, function (httpResponse) {
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.FAIL', httpResponse);
         });
@@ -401,8 +402,15 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
     },
     delete: function (id) {
       this.logger.debug(this.serviceName + ' REAL, delete', id);
+      var self = this;
       var response = this.resource.delete({ id: id }, function (value, responseHeaders) {
-          self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', value);
+          self.logger.debug('delete success ', [
+            self.$rootScope,
+            self.eventChannel,
+            value,
+            responseHeaders
+          ]);
+          self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', value, responseHeaders);
         }, function (httpResponse) {
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.FAIL', httpResponse);
         });

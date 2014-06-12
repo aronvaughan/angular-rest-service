@@ -1,6 +1,6 @@
 {
   "name": "angular-rest-service",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "angular lib for create typical rest service (create/read/readAll/update/delete), allows for mocking for quick UI development, is similar to a BackBone model in how it binds to REST",
   "keywords": [
     "angular",
