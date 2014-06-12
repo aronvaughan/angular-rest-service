@@ -507,8 +507,11 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             self.logger.debug(self.serviceName + ' REAL should call onGetAllSuccess?', self.onGetAllSuccess);
             if (self.onGetAllSuccess) {
                 self.onGetAllSuccess(value, responseHeaders);
-                self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATED.ALL', value);
             }
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATED.ALL', value);
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GETALL.SUCCESS', value);
+        }, function(httpResponse) {
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GETALL.FAIL', httpResponse);
         });
         this.logger.debug(this.serviceName + ' REAL, get all:', collection);
         return collection;
@@ -536,8 +539,10 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             self.logger.debug(' REAL should call onGetSuccess?', self.onGetSuccess);
             if (self.onGetSuccess) {
                 self.onGetSuccess(value, responseHeaders);
-                self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.SUCCESS', value);
             }
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.SUCCESS', value);
+        }, function(httpResponse) {
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.FAIL', httpResponse);
         });
 
         this.logger.debug(' REAL, get got instance', this.single);
@@ -572,13 +577,22 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
         if (instance.id === undefined) {
             console.log('REAL, doing POST (create)', instance);
             this.logger.debug(this.serviceName + ' REAL, doing POST (create)', instance);
-            response = this.resource.save(instance);
+            response = this.resource.save(instance, function(value, responseHeaders) {
+                    self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.SUCCESS', value);
+                },
+                function(httpResponse) {
+                    self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.FAIL', httpResponse);
+                });
             console.log('REAL, response ', response);
         } else {
             this.logger.debug(this.serviceName + ' REAL, doing PUT (update)', instance);
             response = this.resource.update({
                 id: instance.id
-            }, instance);
+            }, instance, function(value, responseHeaders) {
+                self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.SUCCESS', value);
+            }, function(httpResponse) {
+                self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.FAIL', httpResponse);
+            });
         }
         this.logger.debug(this.serviceName + ' REAL, save response from server: ', response);
         return response;
@@ -592,6 +606,10 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
         this.logger.debug(this.serviceName + ' REAL, delete', id);
         var response = this.resource.delete({
             id: id
+        }, function(value, responseHeaders) {
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', value);
+        }, function(httpResponse) {
+            self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.FAIL', httpResponse);
         });
         return response;
     }

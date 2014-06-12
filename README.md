@@ -117,9 +117,23 @@ See example in source code
 
 ## Changelog
 
-### v 0.0.1
+### v 0.0.2
 
 * initial release
+
+### v 0.0.3
+
+* add custom init method for easy overriding
+
+### v 0.0.4
+
+* fix minification error where custom initialize wasn't being called on minified version
+
+### v 0.0.5
+
+* fix defect where events are only sent if you have a custom method defined
+* events are now sent for EVERY action
+* failure events are now sent for every unsuccessful action as well
 
 ## TODO
 
