@@ -339,8 +339,13 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             self.onGetAllSuccess(value, responseHeaders);
           }
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATED.ALL', value);
+          self.logger.debug('sending event: get all success SERVICE.' + self.eventChannel + '.GETALL.SUCESS', [
+            value,
+            responseHeaders
+          ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GETALL.SUCCESS', value);
         }, function (httpResponse) {
+          self.logger.debug('sending event: get all fail SERVICE.' + self.eventChannel + '.GETALL.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GETALL.FAIL', httpResponse);
         });
       this.logger.debug(this.serviceName + ' REAL, get all:', collection);
@@ -359,8 +364,13 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
         if (self.onGetSuccess) {
           self.onGetSuccess(value, responseHeaders);
         }
+        self.logger.debug('sending event: get success SERVICE.' + self.eventChannel + '.GET.SUCESS', [
+          value,
+          responseHeaders
+        ]);
         self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.SUCCESS', value);
       }, function (httpResponse) {
+        self.logger.debug('sending event: get fail SERVICE.' + self.eventChannel + '.GET.FAIL', [httpResponse]);
         self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.FAIL', httpResponse);
       });
       this.logger.debug(' REAL, get got instance', this.single);
@@ -384,16 +394,26 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
         console.log('REAL, doing POST (create)', instance);
         this.logger.debug(this.serviceName + ' REAL, doing POST (create)', instance);
         response = this.resource.save(instance, function (value, responseHeaders) {
+          self.logger.debug('sending event: save success SERVICE.' + self.eventChannel + '.SAVE.SUCESS', [
+            value,
+            responseHeaders
+          ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.SUCCESS', value, responseHeaders);
         }, function (httpResponse) {
+          self.logger.debug('sending event: update fail SERVICE.' + self.eventChannel + '.UPDATE.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.FAIL', httpResponse);
         });
         console.log('REAL, response ', response);
       } else {
         this.logger.debug(this.serviceName + ' REAL, doing PUT (update)', instance);
         response = this.resource.update({ id: instance.id }, instance, function (value, responseHeaders) {
+          self.logger.debug('sending event: update success SERVICE.' + self.eventChannel + '.UPDATE.SUCESS', [
+            value,
+            responseHeaders
+          ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.SUCCESS', value, responseHeaders);
         }, function (httpResponse) {
+          self.logger.debug('sending event: update fail SERVICE.' + self.eventChannel + '.UPDATE.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.FAIL', httpResponse);
         });
       }
@@ -404,7 +424,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       this.logger.debug(this.serviceName + ' REAL, delete', id);
       var self = this;
       var response = this.resource.delete({ id: id }, function (value, responseHeaders) {
-          self.logger.debug('delete success ', [
+          self.logger.debug('sending event: delete success SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', [
             self.$rootScope,
             self.eventChannel,
             value,
@@ -412,6 +432,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
           ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', value, responseHeaders);
         }, function (httpResponse) {
+          self.logger.debug('sending event: delete fail SERVICE.' + self.eventChannel + '.DELETE.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.FAIL', httpResponse);
         });
       return response;

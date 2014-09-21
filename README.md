@@ -135,6 +135,11 @@ See example in source code
 * events are now sent for EVERY action
 * failure events are now sent for every unsuccessful action as well
 
+### v 0.0.6
+
+* debug log events before sending - make it easier for clients to pick up events
+* send params on post ngResource calls
+
 ## TODO
 
 * figure out integration tests (angular only allows unit or functional)
