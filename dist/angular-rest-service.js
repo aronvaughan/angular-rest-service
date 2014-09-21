@@ -391,9 +391,12 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
       //check whether to do a PUT or POST
       //console.log(' REAL save, instance id: ', instance.id);
       if (instance.id === undefined) {
-        console.log('REAL, doing POST (create)', instance);
-        this.logger.debug(this.serviceName + ' REAL, doing POST (create)', instance);
-        response = this.resource.save(instance, function (value, responseHeaders) {
+        console.log('REAL, doing POST (create)', params, instance);
+        this.logger.debug(this.serviceName + ' REAL, doing POST (create)', [
+          params,
+          instance
+        ]);
+        response = this.resource.save(params, instance, function (value, responseHeaders) {
           self.logger.debug('sending event: save success SERVICE.' + self.eventChannel + '.SAVE.SUCESS', [
             value,
             responseHeaders
