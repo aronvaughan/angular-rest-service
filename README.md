@@ -140,6 +140,12 @@ See example in source code
 * debug log events before sending - make it easier for clients to pick up events
 * send params on post ngResource calls
 
+### v 0.0.7
+* send params on delete and put ngResource calls
+
+### v 0.0.8
+* add successCallback and failureCallback to all remote calls
+
 ## TODO
 
 * figure out integration tests (angular only allows unit or functional)

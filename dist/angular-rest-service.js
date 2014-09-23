@@ -169,28 +169,31 @@ var ServiceBase = _.extend({}, RequirementsBase, {
         this.customInitialize(dependencies, requirements);
       }
     },
-    getAll: function (params) {
+    getAll: function (params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' SERVICE, get all from remote impl', params);
-      this.collection = this.serviceRemote.getAll(params);
+      this.collection = this.serviceRemote.getAll(params, callbackSuccess, callbackFailure);
       //return the data
       this.logger.debug(this.serviceName + ' SERVICE, get all', this.collection);
       return this.collection;
     },
-    get: function (params) {
+    get: function (params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' SERVICE, get from remote impl ', params);
-      this.instance = this.serviceRemote.get(params);
+      this.instance = this.serviceRemote.get(params, callbackSuccess, callbackFailure);
       return this.instance;
     },
-    save: function (instance, params) {
+    save: function (instance, params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' SERVICE,  save ', instance);
       this.logger.debug(this.serviceName + ' SERVICE,  save params ', params);
-      var result = this.serviceRemote.save(instance, params);
+      var result = this.serviceRemote.save(instance, params, callbackSuccess, callbackFailure);
       //this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.SAVED', instance);
       return result;
     },
-    delete: function (id) {
-      this.logger.debug(this.serviceName + ' SERVICE, delete ', id);
-      this.serviceRemote.delete(id);  //this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.DELETED', id);
+    delete: function (id, params, callbackSuccess, callbackFailure) {
+      this.logger.debug(this.serviceName + ' SERVICE, delete ', [
+        id,
+        params
+      ]);
+      this.serviceRemote.delete(id, params, callbackSuccess, callbackFailure);  //this.$rootScope.$broadcast('SERVICE.' + this.eventChannel + '.DELETED', id);
     }
   });
 /**
@@ -224,7 +227,7 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
         this.customInitialize(dependencies, requirements);
       }
     },
-    getAll: function (params) {
+    getAll: function (params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' MOCK, mock get all, length: ' + params.length, params);
       //console.log('get all called!!!', params);
       //AV: fixme: how to get the count of attributes on an object....
@@ -246,14 +249,14 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
         return this.mockData;
       }
     },
-    get: function (params) {
+    get: function (params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' MOCK, mock get ', params.id);
       if (params.id !== undefined) {
         var index = this.findIndexInMock(params.id);
         return this.mockData[index];
       }
     },
-    save: function (instance, params) {
+    save: function (instance, params, callbackSuccess, callbackFailure) {
       var index = this.findIndexInMock(instance.id);
       this.logger.debug(this.serviceName + ' MOCK, mock saving', [
         index,
@@ -276,7 +279,7 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
       }
       return instance;
     },
-    delete: function (id) {
+    delete: function (id, params, callbackSuccess, callbackFailure) {
       var index = this.findIndexInMock(id);
       this.logger.debug(this.serviceName + ' MOCK, mock delete ', index, id);
       this.mockData.splice(index, 1);
@@ -329,7 +332,7 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
         this.customInitialize(dependencies, requirements);
       }
     },
-    getAll: function (params) {
+    getAll: function (params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' REAL, get all called', params);
       var self = this;
       var collection = this.resource.query(params, function (value, responseHeaders) {
@@ -344,14 +347,20 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             responseHeaders
           ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GETALL.SUCCESS', value);
+          if (callbackSuccess) {
+            callbackSuccess(value, responseHeaders);
+          }
         }, function (httpResponse) {
           self.logger.debug('sending event: get all fail SERVICE.' + self.eventChannel + '.GETALL.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GETALL.FAIL', httpResponse);
+          if (callbackFailure) {
+            callbackFailure(httpResponse);
+          }
         });
       this.logger.debug(this.serviceName + ' REAL, get all:', collection);
       return collection;
     },
-    get: function (params) {
+    get: function (params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' REAL, get from remote', params);
       if (params === undefined || params.id === undefined) {
         this.logger.debug(this.serviceName + ' REAL, get id was null, no-op');
@@ -369,14 +378,20 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
           responseHeaders
         ]);
         self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.SUCCESS', value);
+        if (callbackSuccess) {
+          callbackSuccess(value, responseHeaders);
+        }
       }, function (httpResponse) {
         self.logger.debug('sending event: get fail SERVICE.' + self.eventChannel + '.GET.FAIL', [httpResponse]);
         self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.GET.FAIL', httpResponse);
+        if (callbackFailure) {
+          callbackFailure(httpResponse);
+        }
       });
       this.logger.debug(' REAL, get got instance', this.single);
       return this.single;
     },
-    save: function (instance, params) {
+    save: function (instance, params, callbackSuccess, callbackFailure) {
       this.logger.debug(this.serviceName + ' REAL, doing save', instance);
       this.logger.debug(this.serviceName + ' REAL, doing save params ', params);
       var response;
@@ -402,9 +417,15 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             responseHeaders
           ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.SUCCESS', value, responseHeaders);
+          if (callbackSuccess) {
+            callbackSuccess(value, responseHeaders);
+          }
         }, function (httpResponse) {
           self.logger.debug('sending event: update fail SERVICE.' + self.eventChannel + '.UPDATE.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.SAVE.FAIL', httpResponse);
+          if (callbackFailure) {
+            callbackFailure(httpResponse);
+          }
         });
         console.log('REAL, response ', response);
       } else {
@@ -415,18 +436,32 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             responseHeaders
           ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.SUCCESS', value, responseHeaders);
+          if (callbackSuccess) {
+            callbackSuccess(value, responseHeaders);
+          }
         }, function (httpResponse) {
           self.logger.debug('sending event: update fail SERVICE.' + self.eventChannel + '.UPDATE.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.UPDATE.FAIL', httpResponse);
+          if (callbackFailure) {
+            callbackFailure(httpResponse);
+          }
         });
       }
       this.logger.debug(this.serviceName + ' REAL, save response from server: ', response);
       return response;
     },
-    delete: function (id) {
-      this.logger.debug(this.serviceName + ' REAL, delete', id);
+    delete: function (id, params, callbackSuccess, callbackFailure) {
+      this.logger.debug(this.serviceName + ' REAL, delete', [
+        id,
+        params
+      ]);
       var self = this;
-      var response = this.resource.delete({ id: id }, function (value, responseHeaders) {
+      var sendParams = { id: id };
+      for (var param in params) {
+        this.logger.debug(' REAL delete param: ' + param, params[param]);
+        sendParams[param] = params[param];
+      }
+      var response = this.resource.delete(sendParams, function (value, responseHeaders) {
           self.logger.debug('sending event: delete success SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', [
             self.$rootScope,
             self.eventChannel,
@@ -434,9 +469,15 @@ var DataServiceBase = _.extend({}, RequirementsBase, {
             responseHeaders
           ]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.SUCCESS', value, responseHeaders);
+          if (callbackSuccess) {
+            callbackSuccess(value, responseHeaders);
+          }
         }, function (httpResponse) {
           self.logger.debug('sending event: delete fail SERVICE.' + self.eventChannel + '.DELETE.FAIL', [httpResponse]);
           self.$rootScope.$broadcast('SERVICE.' + self.eventChannel + '.DELETE.FAIL', httpResponse);
+          if (callbackFailure) {
+            callbackFailure(httpResponse);
+          }
         });
       return response;
     }
