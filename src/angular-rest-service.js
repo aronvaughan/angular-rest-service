@@ -362,8 +362,18 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
                     }
                 }
             }
+            if (callbackSuccess) {
+                callbackSuccess(dataToReturn);
+            }
+            this.logger.debug('failure func', callbackFailure);
+
             return dataToReturn;
         } else {
+            if (callbackSuccess) {
+                callbackSuccess(this.mockData);
+            }
+            this.logger.debug('failure func', callbackFailure);
+
             return this.mockData;
         }
     },
@@ -377,6 +387,12 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
         this.logger.debug(this.serviceName + ' MOCK, mock get ', params.id);
         if (params.id !== undefined) {
             var index = this.findIndexInMock(params.id);
+
+            if (callbackSuccess) {
+                callbackSuccess(this.mockData[index]);
+            }
+            this.logger.debug('failure func', callbackFailure);
+
             return this.mockData[index];
         }
     },
@@ -406,6 +422,10 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
             this.afterSave(index, instance);
         }
 
+        if (callbackSuccess) {
+            callbackSuccess(instance);
+        }
+        this.logger.debug('failure func', callbackFailure);
         return instance;
     },
 
@@ -417,6 +437,11 @@ var MockServiceImplBase = _.extend({}, RequirementsBase, {
         var index = this.findIndexInMock(id);
         this.logger.debug(this.serviceName + ' MOCK, mock delete ', index, id);
         this.mockData.splice(index, 1);
+
+        if (callbackSuccess) {
+            callbackSuccess();
+        }
+        this.logger.debug('failure func', callbackFailure);
     },
 
     /**
